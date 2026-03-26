@@ -33,7 +33,7 @@ Install the base PHP CLI along with the most commonly used extensions:
 sudo apt install -y php8.5-cli php8.5-common php8.5-mysql php8.5-zip php8.5-gd php8.5-mbstring php8.5-curl php8.5-xml php8.5-bcmath
 ```
 
-### 3. Server-Specific Installation
+### 3. Install Server-Specific Packages
 
 Depending on your web server stack, run one of the following:
 
@@ -51,66 +51,82 @@ sudo apt install -y libapache2-mod-php8.5
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Post-Installation Configuration
 
-### Set PHP 8.5 as the System Default
+### Set PHP 8.5 as the CLI Default
 
-If you have multiple versions installed, use `update-alternatives` to set the default CLI version:
+If you have multiple PHP versions installed, update the command-line version. This determines which PHP version runs when you execute `php` commands in the terminal:
 
 ```bash
 sudo update-alternatives --set php /usr/bin/php8.5
 ```
 
-### Update Web Server Links
+### Configure Your Web Server
 
-#### Nginx
+#### For Nginx Users
 
-Update your site configuration file (e.g., `/etc/nginx/sites-available/default`):
+Update your site configuration file (e.g., `/etc/nginx/sites-available/default`) to point to the new PHP-FPM socket:
 
 ```nginx
-# Change this line
 fastcgi_pass unix:/run/php/php8.5-fpm.sock;
 ```
 
-Then restart Nginx:
+Restart Nginx to apply the changes:
 
 ```bash
 sudo systemctl restart nginx
 ```
 
-#### Apache
+#### For Apache Users
 
-Disable the old module and enable the new one:
+Disable the previous PHP module and enable PHP 8.5:
 
 ```bash
-sudo a2dismod php8.4   # Change 8.4 to your previous version
+sudo a2dismod php8.4   # Replace 8.4 with your previous version
 sudo a2enmod php8.5
 sudo systemctl restart apache2
 ```
 
 ---
 
-## ✅ Verification
+## ✅ Verify the Installation
 
-Confirm that the installation was successful:
+Confirm that PHP 8.5 is now active:
 
 ```bash
 php -v
 ```
 
-Output should resemble:
+Expected output:
 
 ```
 PHP 8.5.x (cli) (built: ...)
 ```
 
+You can also verify web server integration by creating a `phpinfo()` file in your web root and accessing it through a browser.
+
 ---
 
-## 🧹 Cleanup (Optional)
+## 🧹 Clean Up Old Version (Optional)
 
-Once you have verified your applications are running correctly, you can remove the old version:
+Once you've confirmed that all applications are working correctly with PHP 8.5, you can remove the previous PHP version:
 
 ```bash
-sudo apt purge php8.4*
+sudo apt purge php8.4*   # Replace 8.4 with your previous version
 sudo apt autoremove
 ```
+
+This frees up disk space and removes unnecessary packages.
+
+---
+
+## 📝 Additional Notes
+
+- The Ondřej Surý PPA is widely trusted and maintained by a Debian developer
+- Always test your applications in a staging environment before upgrading production systems
+- Some extensions may have different names or availability depending on your Ubuntu version
+- If you encounter issues, check the PHP-FPM or Apache error logs for troubleshooting
+
+---
+
+**Need help?** Visit the [Ondřej Surý PPA page](https://launchpad.net/~ondrej/+archive/ubuntu/php) for more information.
